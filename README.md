@@ -32,6 +32,7 @@ around line 14
 ```
 cd /path/to/kibana/app/panels
 mkdir googlemaps
+cd googlemaps
 git clone https://github.com/shakemid/kibana_googlemaps .
 ```
 - Edit config.js to enable googlemaps.
@@ -50,6 +51,7 @@ around line 68
 Currently it has same options as Bettermap. So, maybe it can be used as well as Bettermap.
 
 # ToDo
+- IE support.
 
 # Changes
 ## 0.0.1 (2014-03-11)
