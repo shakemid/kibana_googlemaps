@@ -1,11 +1,18 @@
 <div ng-controller='googlemaps' ng-init="init()">
   <style>
-    .leaflet-label {
-      color: #fff;
+    div#googlemaps {
+      color: #000 !important;
+    }
+    div#googlemaps label {
+      color: #000 !important;
+      font-size: 11px !important;
+    }
+    div#googlemaps img {
+      max-width: none;
     }
   </style>
   <!-- This solution might work well for other panels that have trouble with heights -->
   <div  style="padding-right:10px;padding-top:10px;height:{{panel.height|| row.height}};overflow:hidden">
-    <div googlemaps id='googlemaps' params="{{panel}}" style="height:100%"></div>
+    <div googlemaps id="googlemaps" params="{{panel}}" style="height:100%"></div>
   </div>
 </div>

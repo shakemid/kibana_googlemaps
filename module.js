@@ -1,8 +1,8 @@
 /**
  * == GoogleMaps for Kibana
  * Status: *Experimental*
- * Version: 0.0.1
- * Date: 2014-03-11
+ * Version: 0.0.1a
+ * Date: 2014-03-12
  * Author: K.Cima k-cima@kendama.asia  
  *
  * This module is forked from Bettermap.
@@ -41,8 +41,7 @@ define([
   'lodash',
   'google_maps',
   './lib/markerclusterer',
-  'require',
-  'css!./module.css'
+  'require'
 ],
 function (angular, app, _, google_maps, localRequire) {
   'use strict';
@@ -192,7 +191,7 @@ function (angular, app, _, google_maps, localRequire) {
             // Keep only what we need for the set
             $scope.data = $scope.data.slice(0,$scope.panel.size).concat(_.map(results.hits.hits, function(hit) {
               return {
-                coordinates : new google_maps.LatLng(hit.fields[$scope.panel.field][1],hit.fields[$scope.panel.field][0]),
+                coordinates : [ hit.fields[$scope.panel.field][1], hit.fields[$scope.panel.field][0] ],
                 tooltip : hit.fields[$scope.panel.tooltip]
               };
             }));
@@ -229,7 +228,15 @@ function (angular, app, _, google_maps, localRequire) {
           render_panel();
         });
 
-        var map, layerGroup;
+        scope.$on('render', function(){
+          if(!_.isUndefined(map)) {
+            render_panel();
+          }
+        });
+
+        var map;
+        var markerList = [];
+        var markerCluster;
 
         function render_panel() {
             scope.panelMeta.loading = false;
@@ -242,12 +249,26 @@ function (angular, app, _, google_maps, localRequire) {
               });
             }
 
-            var markerList = [];
+            // clear markers
+            if ( markerList.length > 0 ) {
+              markerCluster.clearMarkers();
+              markerList.length = 0;
+            }
+
+            var bounds = {
+              minLng:  180,
+              minLat:   85,
+              maxLng: -180,
+              maxLat:  -85 
+            };
 
             _.each(scope.data, function(p) {
+              var Lat = p.coordinates[0];
+              var Lng = p.coordinates[1];
+
               var marker = new google_maps.Marker({
                 map: map, 
-                position: p.coordinates, 
+                position: new google_maps.LatLng( Lat, Lng ),
                 clickable: true,
                 draggable: false
               });
@@ -262,10 +283,22 @@ function (angular, app, _, google_maps, localRequire) {
               }
 
               markerList.push(marker);
+
+              // get bounds
+              if (Lat > -85 && Lat < bounds.minLat) { bounds.minLat = Lat; }
+              if (Lat <  85 && Lat > bounds.maxLat) { bounds.maxLat = Lat; }
+              if (Lng < bounds.minLng) { bounds.minLng = Lng; }
+              if (Lng > bounds.maxLng) { bounds.maxLng = Lng; }
             });
 
-            var markerCluster = new MarkerClusterer(map, markerList);
-            // ToDo set scope
+            map.fitBounds( 
+              new google_maps.LatLngBounds(
+                new google_maps.LatLng( bounds.maxLat, bounds.minLng ), // top-left
+                new google_maps.LatLng( bounds.minLat, bounds.maxLng )  // bottom-right
+              ) 
+            );
+
+            markerCluster = new MarkerClusterer(map, markerList, { gridSize: 30, maxZoom: 15 });
         }
       }
     };
