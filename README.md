@@ -54,13 +54,16 @@ Currently it has same options as Bettermap. So, maybe it can be used as well as 
 - IE support.
 
 # Changes
-## 0.0.1 (2014-03-11)
-- Initial commit
+## 0.0.1b (2014-05-05)
+- Fixed for Kibana 3.0.1 or higher
 
 ## 0.0.1a (2014-03-12)
 - Added fitBounds for GoogleMaps
 - Added gridSize, maxZoom for MarkerClusterer
 - Fix css for GoogleMaps buttons
+
+## 0.0.1 (2014-03-11)
+- Initial commit
 
 # Links
 - ElasticSearch: http://www.elasticsearch.org/
